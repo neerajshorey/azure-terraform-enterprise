@@ -1,0 +1,40 @@
+# Ignore local .terraform directories (recursively for all levels)
+**/.terraform/
+**/.terraform.d/
+*.exe
+.tmp.driveupload/
+
+# Ignore Terraform state files and backups
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Ignore Terraform override files (local use only)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore variable definition files that may contain sensitive data
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+
+# Editor and OS generated files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Ignore Terraform plan output
+*.plan
+tfplan
+**/tfplan
+
+# Ignore Mac ._ resource fork files
+._*
+
+# Python virtual environments (if using scripts)
+.venv/

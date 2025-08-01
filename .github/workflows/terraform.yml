@@ -1,0 +1,80 @@
+name: Terraform CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+
+env:
+  TF_IN_AUTOMATION: true
+
+jobs:
+  terraform-ci:
+    name: 🧪 Terraform CI (Init + Validate + Plan)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: envs/dev
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.5
+
+      - name: 🔐 Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧼 Terraform Init
+        run: terraform init
+
+      - name: ✅ Terraform Validate
+        run: terraform validate
+
+      - name: 📊 Terraform Plan
+        run: terraform plan -var-file=../../dev.tfvars
+
+  terraform-cd:
+    name: 🚀 Terraform CD (Apply to Azure)
+    needs: terraform-ci
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://portal.azure.com/
+
+    defaults:
+      run:
+        working-directory: envs/dev
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.5
+
+      - name: 🔐 Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧼 Terraform Init
+        run: terraform init
+
+      - name: 🚀 Terraform Apply
+        run: terraform apply -auto-approve -var-file=../../dev.tfvars
