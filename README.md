@@ -111,8 +111,7 @@ This repository is open-source under the MIT License: https://opensource.org/lic
 
 Author
 
-Neeraj Shorey  
-Email: neeraj.shorey@gmail.com  
+Neeraj Shorey    
 GitHub: https://github.com/neerajshorey
 
 Tags
